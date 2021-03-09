@@ -8,14 +8,23 @@ public class Player : MonoBehaviour
     private float horizontalInput;
     private Rigidbody rigidBodyComponent;
     private int superJumps;
+    public Vector3 startPosition;
 
     [SerializeField] private Transform groundCheckTransform;
     [SerializeField] private LayerMask playerMask;
+
+    //
+    private void Awake()
+    {
+        startPosition = transform.position;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBodyComponent = GetComponent<Rigidbody>();
+
+
     }
 
     // Update is called once per frame
@@ -27,7 +36,17 @@ public class Player : MonoBehaviour
             
         }
 
-        horizontalInput = Input.GetAxis("Horizontal");
+        if (transform.position.y < -5)
+        {
+            transform.position = startPosition;
+        }
+
+        horizontalInput = Input.GetAxis("Horizontal") * 3;
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            horizontalInput *= 2;
+        }
     }
 
     // FixedUpdatee is called once every physics update
@@ -56,6 +75,8 @@ public class Player : MonoBehaviour
             jumpKeyPressed = false;
         }
 
+        
+
 
     }
 
@@ -66,6 +87,12 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
             superJumps++;
             Debug.Log(superJumps);
+        }
+
+        if (other.gameObject.layer == 10)
+        {
+            transform.position = startPosition;
+            superJumps = 0;
         }
 
     }
