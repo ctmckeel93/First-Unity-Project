@@ -9,11 +9,12 @@ public class Player : MonoBehaviour
     private Rigidbody rigidBodyComponent;
     private int superJumps;
     public Vector3 startPosition;
+    public Animator animator;
 
     [SerializeField] private Transform groundCheckTransform;
     [SerializeField] private LayerMask playerMask;
 
-    //
+    
     private void Awake()
     {
         startPosition = transform.position;
@@ -23,6 +24,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         rigidBodyComponent = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        
 
 
     }
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
            jumpKeyPressed = true;
@@ -42,17 +46,24 @@ public class Player : MonoBehaviour
         }
 
         horizontalInput = Input.GetAxis("Horizontal") * 3;
+        
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
             horizontalInput *= 2;
         }
+
+        if (Input.GetKey("w"))
+        {
+            animator.SetBool("isRunning", true);
+        }
+        
+
     }
 
     // FixedUpdatee is called once every physics update
     void FixedUpdate()
     {
-        rigidBodyComponent.velocity = new Vector3(horizontalInput, rigidBodyComponent.velocity.y, 0);
 
         if (Physics.OverlapSphere(groundCheckTransform.position,0.1f, playerMask).Length == 0)
         {
@@ -60,7 +71,7 @@ public class Player : MonoBehaviour
         }
         if (jumpKeyPressed)
         {
-            float jumpPower = 5;
+            float jumpPower = 10;
             if (superJumps != 0)
             {
                 jumpPower = 8;
